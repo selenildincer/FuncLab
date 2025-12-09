@@ -1,5 +1,80 @@
-﻿<Window x:Class="FuncLab.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:oxy="http://oxyplot.org/wpf" mc:Ignorable="d" Title="FuncLab - Function Plotter" Height="500" Width="950">
-    <Grid Margin="10">
+﻿<Window x:Class="FuncLab.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="FuncLab - Professional Function Plotter" 
+        Height="600" Width="1000"
+        Background="#F0F0F0">
+    <Window.Resources>
+        <SolidColorBrush x:Key="PrimaryColor" Color="#007ACC"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#333333"/>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#005A9C"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#004578"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" 
+                                CornerRadius="3" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" 
+                                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="HeaderStyle">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -7,43 +82,77 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
-        <!-- Fonksiyon Giriş -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="0 0 0 10">
-            <TextBlock Text="f(x) = " VerticalAlignment="Center" FontSize="16"/>
-            <TextBox x:Name="FunctionInput" Width="400" Height="30" FontSize="16" Margin="5 0"/>
-        </StackPanel>
-        <!-- Grafik -->
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" Margin="0 0 10 0">
+
+        <Border Grid.Row="0" Grid.Column="0" Background="{StaticResource BackgroundColor}" CornerRadius="8" Padding="10" Margin="0 0 15 15">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="f(x) = " VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource PrimaryColor}"/>
+                <TextBox x:Name="FunctionInput" Width="450" Height="35" Margin="5 0"/>
+                <Button Content="Draw" Width="100" Height="35" Click="DrawButton_Click" Margin="20,0,0,0" Style="{StaticResource {x:Type Button}}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" Background="{StaticResource BackgroundColor}" CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1" Margin="0 0 15 0">
+            <Border.Effect>
+                <DropShadowEffect Color="#CCCCCC" Direction="320" ShadowDepth="4" Opacity="0.6" BlurRadius="5"/>
+            </Border.Effect>
             <oxy:PlotView x:Name="PlotView" Model="{Binding PlotModel}" Margin="5"/>
         </Border>
-        <!-- Butonlar -->
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0 10 0 0" HorizontalAlignment="Center">
-            <Button Content="Draw" Width="100" Height="35" Margin="5" Click="DrawButton_Click"/>
-            <Button Content="Derivative" Width="100" Height="35" Margin="5" Click="DerivativeButton_Click"/>
-            <Button Content="Integral" Width="100" Height="35" Margin="5" Click="IntegralButton_Click"/>
-            <Button Content="Definite Integral" Width="130" Height="35" Margin="5" Click="DefiniteIntegralButton_Click"/>
-            <Button Content="Clear" Width="100" Height="35" Margin="5" Click="ClearButton_Click"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0 15 0 0" HorizontalAlignment="Center">
+            <Button Content="Derivative" Width="120" Click="DerivativeButton_Click"/>
+            <Button Content="Integral" Width="120" Click="IntegralButton_Click"/>
+            <Button Content="Definite Integral" Width="140" Click="DefiniteIntegralButton_Click"/>
+            <Button Content="Clear" Width="100" Click="ClearButton_Click" Background="#CC0000" BorderBrush="#CC0000">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#A30000"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </StackPanel>
-        <!-- Sağ Panel -->
-        <StackPanel Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Margin="10 0 0 0">
-            <TextBlock Text="Results" FontWeight="Bold" FontSize="16" Margin="0 0 0 10"/>
-            <TextBlock Text="Derivative:" FontSize="14" Margin="0 5"/>
-            <TextBox x:Name="DerivativeResult" Height="60" FontSize="14" IsReadOnly="True" TextWrapping="Wrap"/>
-            <TextBlock Text="Integral:" FontSize="14" Margin="0 10 0 5"/>
-            <TextBox x:Name="IntegralResult" Height="60" FontSize="14" IsReadOnly="True" TextWrapping="Wrap"/>
-            <!-- Belirli Integral Girişi -->
-            <StackPanel x:Name="DefIntegralPanel" Visibility="Collapsed" Margin="0 15 0 0">
-                <TextBlock Text="Definite Integral Limits:" FontSize="14" FontWeight="Bold" Margin="0 0 0 5"/>
-                <StackPanel Orientation="Horizontal" Margin="0 5">
-                    <TextBlock Text="a:" VerticalAlignment="Center"/>
-                    <TextBox x:Name="LowerLimitInput" Width="60" Margin="5 0"/>
-                    <TextBlock Text="b:" VerticalAlignment="Center" Margin="10 0 0 0"/>
-                    <TextBox x:Name="UpperLimitInput" Width="60" Margin="5 0"/>
+
+        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Background="{StaticResource BackgroundColor}" CornerRadius="8" Padding="15">
+            <Border.Effect>
+                <DropShadowEffect Color="#CCCCCC" Direction="320" ShadowDepth="4" Opacity="0.6" BlurRadius="5"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock Text="📈 Analysis Results" Style="{StaticResource HeaderStyle}" Foreground="{StaticResource PrimaryColor}"/>
+                <Separator Margin="0 0 0 10"/>
+
+                <TextBlock Text="Derivative:" FontWeight="SemiBold" FontSize="15" Margin="0 5"/>
+                <TextBox x:Name="DerivativeResult" Height="60" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+
+                <TextBlock Text="Integral:" FontWeight="SemiBold" FontSize="15" Margin="0 15 0 5"/>
+                <TextBox x:Name="IntegralResult" Height="60" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+
+                <StackPanel x:Name="DefIntegralPanel" Visibility="Collapsed" Margin="0 20 0 0">
+                    <TextBlock Text="Definite Integral Limits" FontWeight="Bold" FontSize="15" Margin="0 0 0 10"/>
+
+                    <Grid Margin="0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="a: " Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox x:Name="LowerLimitInput" Grid.Column="1" Width="80" HorizontalAlignment="Left" Margin="5 0"/>
+
+                        <TextBlock Text="b: " Grid.Column="2" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        <TextBox x:Name="UpperLimitInput" Grid.Column="3" Width="80" HorizontalAlignment="Left" Margin="5 0"/>
+                    </Grid>
+
+                    <Button Content="Calculate Definite Integral" Width="200" Height="30" HorizontalAlignment="Left" Click="DefIntegralOkButton_Click" Margin="0 10 0 0"/>
                 </StackPanel>
-                <Button Content="OK" Width="80" Height="30" HorizontalAlignment="Left" Click="DefIntegralOkButton_Click"/>
             </StackPanel>
-        </StackPanel>
+        </Border>
     </Grid>
 </Window>
